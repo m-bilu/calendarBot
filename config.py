@@ -1,0 +1,2 @@
+## Private info!!
+BOT_TOKEN = 'MTEzMDkyMTgxNDc3MjY5MDk3NA.GR0gCC.eodwifNy0QzgpB5KsJvAvCq5kkG4UTS66NBJp0'
