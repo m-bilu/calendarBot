@@ -7,8 +7,15 @@ import google_auth_oauthlib.flow
 from googleapiclient.discovery import build
 import json
 
+
+
+
+
+####################################################
+
+
 ## Creating instance of bot
-bot = commands.Bot(command_prefix="!", intents=None)
+bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
 
 ## Creating instance of Google Calendar API
@@ -25,12 +32,21 @@ with open(credentialsFile) as f:
     credentialsJSON = json.load(f)
 
 
+####################################################
+
 ## COMMANDS: 
+
+## Use bot.command() decorator to define commands
+# Decorator allows commands to sync up with Discord API on launch
+# ctx: context of user
+# send: send msgs to evoked channel
 @bot.command()
 async def Hello(ctx):
     await ctx.send("Hello, I'm your bot!")
 
-@bot.command()
+@bot.command(name='upcomingEvents')
+## upcomingEvents should send a msg in evoked channel, containing
+# 
 async def upcomingEvents(ctx):
     token = credentialsJSON
     service = createCalendarService(token)
@@ -48,6 +64,17 @@ async def upcomingEvents(ctx):
 
 ####################################################
 
+
+@bot.tree.command(name='echo')
+@app_commands.describe(arg= 'What should I say?')
+async def say(interaction: discord.Interaction, arg: str):
+    await interaction.response.send_message(f"User {interaction.user.name} said: f{arg}",
+                                            ephemeral=True)
+    
+
+
+####################################################
+
 ## Event to activate
 @bot.event
 async def on_ready():
@@ -58,20 +85,17 @@ async def on_ready():
     except Exception as e:
         print(e)
 
+##  When you create a bot using Discord.py and define 
+# custom commands using the @bot.command() decorator, 
+# these commands are not automatically known to 
+# Discord until you explicitly register them.
 
-####################################################
-
-@bot.tree.command(name='hello')
-async def hello(interaction:discord.Interaction):
-    await interaction.response.send_message(f"Hey {interaction.user.mention}! This is a slash command!",
-                                            ephemeral=True)
+#####################################################
 
 
-@bot.tree.command(name='echo')
-@app_commands.describe(arg= 'What should I say?')
-async def say(interaction: discord.Interaction, arg: str):
-    await interaction.response.send_message(f"User {interaction.user.name} said: f{arg}",
-                                            ephemeral=True)
+
+
+
 
 
 bot.run(config.BOT_TOKEN)
